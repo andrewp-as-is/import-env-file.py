@@ -16,11 +16,13 @@ def parse(line):
     """find first comment mark after second quote mark"""
     if '#' in line:
         line = line[:line.find('#', quote_delimit)]
-    key, value = map(lambda x: x.strip().strip('\'').strip('"'),
-                     line.split('=', 1))
+    key, value = map(lambda x: x.strip().strip('\'').strip('"'),line.split('=', 1))
     return {key: value}
 
-
 path=".env"
-for line in open(path).read().splitlines():
-    os.environ.update(parse(line))
+lines = open(path).read().splitlines()
+for line_no,line in enumerate(lines,0):
+    try:
+        os.environ.update(parse(line))
+    except ValueError:
+        raise ValueError(".env:%s\n%s" % (line_no,line))
